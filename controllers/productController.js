@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const Category = require('../models/Category');
 
 const productController = {
     // Home page
@@ -170,10 +171,23 @@ const productController = {
     // Create new product
     createProduct: async (req, res) => {
         try {
-            const product = new Product(req.body);
+            const { categoryId, ...productData } = req.body;
+            
+            // Validate category exists
+            const category = await Category.findById(categoryId);
+            if (!category) {
+                return res.status(400).json({ message: 'Invalid category' });
+            }
+            
+            const product = new Product({
+                ...productData,
+                category: category._id // Set the category reference
+            });
+            
             await product.save();
             res.status(201).json(product);
         } catch (error) {
+            console.error('Error creating product:', error);
             res.status(400).json({ message: 'Error creating product' });
         }
     },
@@ -211,8 +225,8 @@ const productController = {
     // Get categories
     getCategories: async (req, res) => {
         try {
-            const categories = await Product.distinct('category');
-            res.json(categories);
+            const categories = await Category.find().sort('name');
+            res.json({ categories }); // Return as { categories: [...] }
         } catch (error) {
             res.status(500).json({ message: 'Error fetching categories' });
         }

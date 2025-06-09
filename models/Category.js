@@ -33,10 +33,4 @@ categorySchema.virtual('productCount', {
     count: true
 });
 
-// Pre-save hook to generate slug
-categorySchema.pre('save', function(next) {
-    this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    next();
-});
-
 module.exports = mongoose.model('Category', categorySchema);
