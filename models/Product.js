@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['Switches', 'Sockets', 'Cables', 'Lighting', 'Circuit Breakers', 'Panels', 'Motors', 'Transformers']
+    ref: 'Category' // Add this reference
   },
   brand: {
     type: String,
